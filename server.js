@@ -3,31 +3,23 @@ const path = require('path');
 const axios = require('axios');
 var Redis = require('ioredis');
 const app = express();
-//const bluebird = require("bluebird");
 
-// make node_redis promise compatible
-//bluebird.promisifyAll(redis.RedisClient.prototype);
-//bluebird.promisifyAll(redis.Multi.prototype);
-const CLUS_MASTER_IP_1 = '10.81.1.78';
-const CLUS_MASTER_PORT_1 = 6379;
 
-const CLUS_MASTER_IP_2 = '10.81.1.85';
-const CLUS_MASTER_PORT_2 = 6379;
 
-const CLUS_MASTER_IP_3 = '10.81.1.169';
-const CLUS_MASTER_PORT_3 = 6379;
+const SENTINEL_IP_1 = '10.81.1.78';
+const SENTINEL_PORT_1 = 6379;
 
-// connect to Redis
-var client = new Redis.Cluster([{
-  port: CLUS_MASTER_PORT_1,
-  host: CLUS_MASTER_IP_1
-}, {
-  port: CLUS_MASTER_PORT_2,
-  host: CLUS_MASTER_IP_2
-}, {
-  port: CLUS_MASTER_PORT_3,
-  host: CLUS_MASTER_IP_3
-}]);
+const SENTINEL_IP_2 = '10.81.1.85';
+const SENTINEL_PORT_2 = 6379;
+
+const MASTER_NODE = "master01"
+
+
+// connect to Redis Sentinel
+var client = new Redis({
+  sentinels: [{ host: SENTINEL_IP_1, port: SENTINEL_PORT_1 }, { host: SENTINEL_IP_2, port: SENTINEL_PORT_2 }],
+  name: MASTER_NODE
+});
 
 client.on('connect', () => {
     console.log(`connected to redis`);
