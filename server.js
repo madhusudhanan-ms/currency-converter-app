@@ -6,11 +6,11 @@ const app = express();
 
 
 
-const SENTINEL_IP_1 = '10.81.1.78';
-const SENTINEL_PORT_1 = 6379;
+const SENTINEL_IP_1 = process.argv[2];
+const SENTINEL_PORT_1 = 26379;
 
-const SENTINEL_IP_2 = '10.81.1.85';
-const SENTINEL_PORT_2 = 6379;
+const SENTINEL_IP_2 = process.argv[3];
+const SENTINEL_PORT_2 = 26379;
 
 const MASTER_NODE = "master01"
 
