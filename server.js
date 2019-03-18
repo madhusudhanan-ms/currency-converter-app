@@ -1,10 +1,11 @@
 const express = require('express');
 const path = require('path');
 const axios = require('axios');
-var Redis = require('ioredis');
+const Redis = require('ioredis');
 const app = express();
 
 var client;
+ 
 
 process.argv.forEach(function (val, index, array) {
   console.log(index + ': ' + val);
@@ -145,7 +146,7 @@ app.get('/rate/:date', (req, res) => {
 /*
  * Run app
  */
-const port = process.env.port || 5000;
+const port = process.env.port || 8000;
 app.listen(port, () => {
     console.log(`App listening on port ${port}!`)
 });
