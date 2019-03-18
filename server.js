@@ -15,7 +15,7 @@ paramCheck();
 
 function paramCheck() {
     if (process.argv[2] == "cluster") {
-        if(process.argv[3] == undefined || process.argv[4] == undefined || process.argv[5] == undefined) {
+        if( process.argv[3] == undefined || process.argv[4] == undefined || process.argv[5] == undefined ) {
             console.log(`Error: Please mention Redis cluster node IPs`);
             process.exit(1);
         } else {
@@ -40,7 +40,7 @@ function paramCheck() {
             }]);
         }
     } else if (process.argv[2] == "sentinel") {
-        if(process.argv[3] == undefined || process.argv[4] == undefined || process.argv[5] == undefined) {
+        if( process.argv[3] == undefined || process.argv[4] == undefined ) {
             console.log(`Error: Please mention Redis Sentinel node IPs`);
             process.exit(1);
         } else {
@@ -56,7 +56,7 @@ function paramCheck() {
             sentinels: [{ host: SENTINEL_IP_1, port: SENTINEL_PORT_1 }, { host: SENTINEL_IP_2, port: SENTINEL_PORT_2 }],
             name: MASTER_NODE});
         }
-    } else if (process.argv[2] == "standalone") {
+    } else if ( process.argv[2] == "standalone" ) {
         if(process.argv[3] == undefined) {
             console.log(`Error: Please mention Redis Standalone node IP`);
             process.exit(1);
