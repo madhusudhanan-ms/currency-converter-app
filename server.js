@@ -4,29 +4,85 @@ const axios = require('axios');
 var Redis = require('ioredis');
 const app = express();
 
+var client;
 
-
-const SENTINEL_IP_1 = process.argv[2];
-const SENTINEL_PORT_1 = 26379;
-
-const SENTINEL_IP_2 = process.argv[3];
-const SENTINEL_PORT_2 = 26379;
-
-const MASTER_NODE = "master01"
-
-
-// connect to Redis Sentinel
-var client = new Redis({
-  sentinels: [{ host: SENTINEL_IP_1, port: SENTINEL_PORT_1 }, { host: SENTINEL_IP_2, port: SENTINEL_PORT_2 }],
-  name: MASTER_NODE
+process.argv.forEach(function (val, index, array) {
+  console.log(index + ': ' + val);
 });
 
+paramCheck();
+
+
+function paramCheck() {
+    if (process.argv[2] == "cluster") {
+        if(process.argv[3] == undefined || process.argv[4] == undefined || process.argv[5] == undefined) {
+            console.log(`Error: Please mention Redis cluster node IPs`);
+            process.exit(1);
+        } else {
+            const CLUSTER_IP_1 = process.argv[3];
+            const CLUSTER_PORT_1 = 6379;
+
+            const CLUSTER_IP_2 = process.argv[4];
+            const CLUSTER_PORT_2 = 6379;
+
+            const CLUSTER_IP_3 = process.argv[5];
+            const CLUSTER_PORT_3 = 6379;
+
+            client = new Redis.Cluster([{
+              port: CLUSTER_PORT_1,
+              host: CLUSTER_IP_1
+            }, {
+              port: CLUSTER_PORT_2,
+              host: CLUSTER_PORT_2
+            }, {
+              port: CLUSTER_PORT_3,
+              host: CLUSTER_IP_3
+            }]);
+        }
+    } else if (process.argv[2] == "sentinel") {
+        if(process.argv[3] == undefined || process.argv[4] == undefined || process.argv[5] == undefined) {
+            console.log(`Error: Please mention Redis Sentinel node IPs`);
+            process.exit(1);
+        } else {
+            const SENTINEL_IP_1 = process.argv[3];
+            const SENTINEL_PORT_1 = 26379;
+
+            const SENTINEL_IP_2 = process.argv[4];
+            const SENTINEL_PORT_2 = 26379;
+
+            const MASTER_NODE = "master01"
+
+            client = new Redis({
+            sentinels: [{ host: SENTINEL_IP_1, port: SENTINEL_PORT_1 }, { host: SENTINEL_IP_2, port: SENTINEL_PORT_2 }],
+            name: MASTER_NODE});
+        }
+    } else if (process.argv[2] == "standalone") {
+        if(process.argv[3] == undefined) {
+            console.log(`Error: Please mention Redis Standalone node IP`);
+            process.exit(1);
+        } else {
+            const REDIS_NODE_IP = process.argv[3];
+            const REDIS_NODE_PORT = 6379
+
+            client = new Redis({
+              port: REDIS_NODE_PORT,
+              host: REDIS_NODE_IP
+            })
+        }
+    } else {
+        console.log(`Error: Please mention Redis deployment type`);
+        process.exit(1);
+    }
+}
+
+
 client.on('connect', () => {
-    console.log(`connected to redis`);
+    console.log(`Connected to Redis`);
 });
 client.on('error', err => {
     console.log(`Error: ${err}`);
 });
+
 
 /*
  * Define app routes and reponses
@@ -84,6 +140,7 @@ app.get('/rate/:date', (req, res) => {
     }
   }));
 });
+
 
 /*
  * Run app
